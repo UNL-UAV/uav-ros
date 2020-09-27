@@ -1,2 +1,0 @@
-Preflight
--DCATKIN_DEVEL_PREFIX=/home/gersonu/GitCode/uav-ros/devel -DCMAKE_INSTALL_PREFIX=/home/gersonu/GitCode/uav-ros/install -G Unix Makefiles

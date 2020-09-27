@@ -1,2 +1,0 @@
-
--DCATKIN_DEVEL_PREFIX=/home/tgibbons/git/catkin/devel -DCMAKE_INSTALL_PREFIX=/home/tgibbons/git/catkin/install -G Unix Makefiles

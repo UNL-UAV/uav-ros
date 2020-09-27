@@ -1,2 +1,2 @@
-
--DCATKIN_DEVEL_PREFIX=/home/tgibbons/git/catkin/devel -DCMAKE_INSTALL_PREFIX=/home/tgibbons/git/catkin/install -G Unix Makefiles
+Preflight
+-DCATKIN_DEVEL_PREFIX=/home/gersonu/GitCode/uav-ros/devel -DCMAKE_INSTALL_PREFIX=/home/gersonu/GitCode/uav-ros/install -G Unix Makefiles

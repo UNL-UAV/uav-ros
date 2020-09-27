@@ -7,6 +7,9 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/tgibbons/git/catkin/devel:$CMAKE_PREFIX_PATH"
-export PWD='/home/tgibbons/git/catkin/build'
-export ROS_PACKAGE_PATH="/home/tgibbons/git/catkin/src:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/gersonu/GitCode/uav-ros/devel:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH="/home/gersonu/GitCode/uav-ros/devel/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/gersonu/GitCode/uav-ros/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PWD='/home/gersonu/GitCode/uav-ros/build'
+export ROSLISP_PACKAGE_DIRECTORIES='/home/gersonu/GitCode/uav-ros/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/home/gersonu/GitCode/uav-ros/src:$ROS_PACKAGE_PATH"

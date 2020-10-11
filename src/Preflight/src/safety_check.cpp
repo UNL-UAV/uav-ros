@@ -2,30 +2,23 @@
 
 //Class that holds methods that check certain safety parameters
 
-class safety_check{
-    private:    
-
-    state_msg drone_state;
-
-    public:
-
-    safety_check(const state_msg::ConstPtr& msg){
-        drone_state = *msg;
+    safety_check::safety_check(state_msg msg){
+        this->drone_state = msg;
     }
 
-    void update_state(const state_msg::ConstPtr& msg){
-        drone_state = *msg;
+    void safety_check::update_state(state_msg msg){
+        this->drone_state = msg;
     }
 
-    bool armed(){
-        return drone_state.armed;
+    bool safety_check::armed(){
+        return this->drone_state.armed;
     }
 
-    bool offboard_mode(){
-        if(this.drone_state.state == "OFFBOARD") return true;
+    bool safety_check::offboard_mode(){
+        if(this->drone_state.mode == "OFFBOARD") return true;
         return false;
     }
 
-
-
-}
+    bool safety_check::connected(){
+        return this->drone_state.connected;
+    }

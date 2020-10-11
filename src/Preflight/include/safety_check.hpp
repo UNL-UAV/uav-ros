@@ -1,9 +1,15 @@
+#ifndef SAFETY_CHECK_H
+#define SAFETY_CHECK_H
+
 #include <ros/ros.h>
 #include <mavros_msgs/CommandBool.h>
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
 
 typedef mavros_msgs::State state_msg;
+
+//defines the rate at which the safety checks should be ran
+#define RATE 1
 
 class safety_check{
     private:
@@ -12,12 +18,15 @@ class safety_check{
 
     public:
 
-    safety_check(const state_msg::ConstPtr& msg)
+    safety_check( state_msg msg);
 
-    bool armed(const mavros_msgs::State::ConstPtr& msg);
+    bool armed();
 
-    bool offboard_mode(const state_msg::ConstPtr& msg);
+    bool offboard_mode();
 
-    void set_state(const state_msg::ConstPtr& msg)
+    void update_state(state_msg msg);
 
-}
+    bool connected();
+};
+
+#endif SAFETY_CHECK_H

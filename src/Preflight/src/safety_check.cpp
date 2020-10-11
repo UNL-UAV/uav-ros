@@ -5,19 +5,27 @@
 class safety_check{
     private:    
 
-
-    public:
-    
     state_msg drone_state;
 
-    bool armed(const state_msg::ConstPtr& msg){
-        return msg.armed
+    public:
+
+    safety_check(const state_msg::ConstPtr& msg){
+        drone_state = *msg;
     }
 
-    bool offboard_mode(const state_msg::ConstPtr& msg){
-        if(msg.state == "OFFBOARD") return true;
+    void update_state(const state_msg::ConstPtr& msg){
+        drone_state = *msg;
+    }
+
+    bool armed(){
+        return drone_state.armed;
+    }
+
+    bool offboard_mode(){
+        if(this.drone_state.state == "OFFBOARD") return true;
         return false;
     }
 
-    
+
+
 }

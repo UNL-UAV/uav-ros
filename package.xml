@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<package format="2">
+	<name>uav_ros</name>
+	<version>1.0.0</version>
+	<description>UNL-UAV ROS Nodes</description>
+
+	<maintainer email="aerospace-uav@unl.edu">UNL Aerospace</maintainer>
+	<license>TODO</license>
+</package>	

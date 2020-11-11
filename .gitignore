@@ -5,3 +5,9 @@ devel/
 
 .DS_Store
 .vscode
+
+bin/
+bin-int/
+workspace/
+
+*.swp

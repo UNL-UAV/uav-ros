@@ -1,6 +1,4 @@
-#ifndef SAFETY_CHECK_H
-#define SAFETY_CHECK_H
-
+#pragma once
 #include <ros/ros.h>
 #include <mavros_msgs/CommandBool.h>
 #include <mavros_msgs/SetMode.h>
@@ -28,5 +26,3 @@ class safety_check{
 
     bool connected();
 };
-
-#endif SAFETY_CHECK_H

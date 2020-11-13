@@ -8,6 +8,7 @@ private:
 	ros::NodeHandle* _nh;
 	PX4* _drone;
 	ros::Time _last;
+	int _increment=0;
 public:
 	NewTakeoffApp(int argc, char** argv) : Application(argc, argv){};
 	void init() override{
@@ -49,9 +50,15 @@ public:
 				}
 			}
 			std::cout << _drone->getState() << std::endl;
+			_increment++;
 			_last = ros::Time::now();
 		}
-		this->_drone->home();
+		this->_drone->move(_increment-1, 0, 2);
+
+		if(_increment > 10){
+			ROS_WARN("We reach 10 pushes. I should shutdown");
+			ros::shutdown();
+		}
 	};
 	~NewTakeoffApp() override {
 		delete _drone;

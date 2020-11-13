@@ -5,7 +5,7 @@ void Application::run(){
 	if(!ros::isInitialized()){
 		ros::Time::init();
 	}
-	ros::Rate rate(20);
+	ros::Rate rate(25);
 	ros::Time start = ros::Time::now();
 	bool running = true;
 	while(running){
@@ -15,6 +15,7 @@ void Application::run(){
 		this->update(diff.toSec());
 		if(ros::isInitialized()){
 			running = ros::ok();
+			ros::spinOnce();
 		}
 		rate.sleep();
 	}

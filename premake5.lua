@@ -98,6 +98,24 @@ project "Preflight"
 		"Core"
 	}
 
+project "newtakeoff" -- Default Project
+	language "C++"
+	cppdialect "C++17"
+	kind "ConsoleApp" -- ConsoleApp / SharedLib
+	-- defines "_DLL" -- If SharedLib
+
+	files{
+		"src/newtakeoff/**.cpp",
+		"src/newtakeoff/**.c"
+	}
+
+	includedirs{
+	}
+
+	links{
+		"Core"
+	}
+
 project "test" -- Default Project
 	language "C++"
 	cppdialect "C++17"

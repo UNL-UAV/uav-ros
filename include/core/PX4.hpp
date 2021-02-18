@@ -12,6 +12,7 @@
 #include <sensor_msgs/NavSatFix.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/String.h>
+#include "Vector3.hpp"
 
 class PX4{
 	private:
@@ -27,6 +28,7 @@ class PX4{
 		ros::ServiceClient _modeClient;
 		
 		mavros_msgs::State _state;
+		Vector3 _position;
 	public:
 		PX4();
 		PX4(ros::NodeHandle& nh) : _nh(nh){};
@@ -50,7 +52,11 @@ class PX4{
 
 		inline const mavros_msgs::State& getState() {
 			return this->_state;
-		}
+		};
+
+		inline void setPosition(const Vector3& v){
+			this->_position = v;
+		};
 
 		~PX4();
 	private:

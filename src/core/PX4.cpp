@@ -39,6 +39,7 @@ std::string PX4::getMode(){
 }
 
 void PX4::move(float x, float y, float z, bool offset){
+	setPosition({x, y, z});
 	_positionPublisher.publish(this->_pose(x, y, z, offset));
 }
 

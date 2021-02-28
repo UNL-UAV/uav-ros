@@ -26,6 +26,7 @@ class PX4{
 		
 		ros::ServiceClient _armingClient;
 		ros::ServiceClient _modeClient;
+		ros::ServiceClient _takeoffClient;
 		
 		mavros_msgs::State _state;
 		Vector3 _position;
@@ -46,6 +47,7 @@ class PX4{
 		
 		void move(float x, float y, float z, bool offset=true);
 		void turn(float yaw);
+		void takeoff_request();
 		void takeoff();
 		void land();
 		void home();

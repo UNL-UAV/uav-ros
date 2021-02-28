@@ -49,6 +49,8 @@ public:
 					ROS_INFO("ARM SET");
 				}
 			}
+			//initialized takeoff
+			this->_drone->takeoff_request();
 			std::cout << _drone->getState() << std::endl;
 			_increment++;
 			_last = ros::Time::now();

@@ -14,6 +14,7 @@ void PX4::init(){
 
 	this->_armingClient = _nh.serviceClient<mavros_msgs::CommandBool>("mavros/cmd/arming");
 	this->_modeClient = _nh.serviceClient<mavros_msgs::SetMode>("mavros/set_mode");
+	this->_takeoffClient = _nh.serviceClient<mavros_msgs::CommandTOL>("/mavros/cmd/takeoff");
 }
 
 void PX4::update(float delta){
@@ -51,6 +52,17 @@ void PX4::turn(float yaw){
 
 void PX4::takeoff(){
 	_action("HOVER");
+}
+
+//requesting a takeoff of 1m of altitude
+void PX4::takeoff_request(){
+	mavros_msgs::CommandTOL takeoff_command;
+	takeoff_command.request.altitude = 1;
+	while(!takeoff_command.response.success){
+		ros::Duration(1).sleep();
+		_takeoffClient.call(takeoff_command);
+	}
+	ROS_INFO("Takeoff Initialized");
 }
 
 void PX4::land(){

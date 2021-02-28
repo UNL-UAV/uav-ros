@@ -5,7 +5,7 @@
 
 class TestApp : public Application{
 public:
-	TestApp(int argc, char** argv) : Application(argc, argv){}
+	TestApp(int argc, char** argv) : Application(argc, argv, "test"){}
 	void init() {
 		std::cout << "Hello World " << this->_argc << " ";
 		for(int i =0; i < this->_argc; i++){

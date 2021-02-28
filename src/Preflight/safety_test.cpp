@@ -36,6 +36,8 @@ int main(int argc, char **argv){
         if(drone_check.connected()) ROS_INFO("Drone is connected");
         else ROS_INFO("Drone is not connected");
 
+        
+
 
         ros::spinOnce();
         rate.sleep();

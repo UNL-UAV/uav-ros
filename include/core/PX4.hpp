@@ -21,6 +21,7 @@ class PX4{
 		ros::Publisher _positionPublisher;
 		ros::Publisher _yawPublisher;
 		ros::Publisher _activityPublisher;
+		ros::Publisher _positionRawPublisher;
 
 		ros::Subscriber _stateSubscriber;
 		
@@ -46,6 +47,7 @@ class PX4{
 		std::string getMode();
 		
 		void move(float x, float y, float z, bool offset=true);
+		void moveRAW(float roll, float pitch, float yaw, float thrust);
 		void turn(float yaw);
 		void takeoff_request();
 		void takeoff();

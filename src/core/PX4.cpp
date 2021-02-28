@@ -1,4 +1,6 @@
 #include "core/PX4.hpp"
+#include "mavros_msgs/AttitudeTarget.h"
+#include "geometry_msgs/Quaternion.h"
 
 PX4::PX4(){
 }
@@ -7,6 +9,7 @@ void PX4::init(){
 	this->_positionPublisher = _nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", 10);
 	this->_yawPublisher = _nh.advertise<std_msgs::Float32>("gi/set_pose/orientation", 10);
 	this->_activityPublisher = _nh.advertise<std_msgs::String>("gi/set_activity/type", 10);
+	this->_positionRawPublisher = _nh.advertise<mavros_msgs::AttitudeTarget>("mavros/setpoint_raw/attitude", 10);
 	
 	this->_stateSubscriber = _nh.subscribe<mavros_msgs::State>("mavros/state", 10, [this](const mavros_msgs::State::ConstPtr& msg){
 		_state = *msg;
@@ -42,6 +45,30 @@ std::string PX4::getMode(){
 void PX4::move(float x, float y, float z, bool offset){
 	setPosition({x, y, z});
 	_positionPublisher.publish(this->_pose(x, y, z, offset));
+}
+
+void PX4::moveRAW(float roll, float pitch, float yaw, float thrust){
+	Vector3 _position;
+	geometry_msgs::Quaternion q;
+	mavros_msgs::AttitudeTarget attitude;
+	geometry_msgs::Vector3 position;
+
+	q.w = 0;
+	q.x = 0;
+	q.y = 0;
+	q.z = 0;
+	attitude.header.stamp = ros::Time::now();
+	attitude.orientation = q;
+	attitude.thrust = thrust;
+
+	position.x = roll;
+	position.y = pitch;
+	position.z = yaw;
+	
+	attitude.body_rate = position;
+	attitude.type_mask = 0;
+
+	_positionRawPublisher.publish(attitude);
 }
 
 void PX4::turn(float yaw){

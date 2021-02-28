@@ -34,7 +34,7 @@ public:
 		this->_drone->update(delta);
 		if(ros::Time::now() - _last > ros::Duration(5.0)){
 			if(!this->_drone->isOffboard()){
-				auto resp = this->_drone->setMode("OFFBOARD");
+				auto resp = this->_drone->setMode("GUIDED_NOGPS");
 				if(!resp.response.mode_sent){
 					ROS_WARN("Could not set mode!");
 				}else{
@@ -50,17 +50,14 @@ public:
 				}
 			}
 			//initialized takeoff
-			this->_drone->takeoff_request();
+			//this->_drone->takeoff_request();
 			std::cout << _drone->getState() << std::endl;
 			_increment++;
 			_last = ros::Time::now();
 		}
 		this->_drone->move(_increment-1, 0, 2);
 
-		if(_increment > 10){
-			ROS_WARN("We reach 10 pushes. I should shutdown");
-			ros::shutdown();
-		}
+
 	};
 	~NewTakeoffApp() override {
 		delete _drone;

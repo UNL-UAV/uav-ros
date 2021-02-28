@@ -1,6 +1,8 @@
 #include "core/Application.hpp"
 #include <ros/ros.h>
 void Application::run(){
+	ros::init(_argc, _argv, this->_name);
+	this->_nh = new ros::NodeHandle();
 	this->init();
 	if(!ros::isInitialized()){
 		ros::Time::init();
@@ -19,4 +21,8 @@ void Application::run(){
 		}
 		rate.sleep();
 	}
+}
+
+Application::~Application(){
+	delete this->_nh;
 }

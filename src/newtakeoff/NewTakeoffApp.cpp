@@ -5,15 +5,12 @@
 
 class NewTakeoffApp : public Application {
 private:
-	ros::NodeHandle* _nh;
 	PX4* _drone;
 	ros::Time _last;
 	int _increment=0;
 public:
-	NewTakeoffApp(int argc, char** argv) : Application(argc, argv){};
+	NewTakeoffApp(int argc, char** argv) : Application(argc, argv, "newTakeOff"){};
 	void init() override{
-		ros::init(_argc, _argv, "newTakeoff");
-		this->_nh = new ros::NodeHandle();
 		ROS_INFO("STARTED ROS");
 		
 		this->_drone = new PX4(*_nh);
@@ -64,7 +61,6 @@ public:
 	};
 	~NewTakeoffApp() override {
 		delete _drone;
-		delete _nh;
 	}
 };
 

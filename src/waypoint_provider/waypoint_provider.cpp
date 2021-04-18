@@ -5,7 +5,8 @@
 
 #include <ros/ros.h>
 #include <termios.h>
-#include "waypoint_provider.h"
+#include "file_utility.hpp"
+#include <geometry_msgs/QuaternionStamped.h>
 
 #define NODE_NAME "waypoint_provider"
 #define NODE_RATE 10
@@ -19,13 +20,10 @@ int main(int argc, char** argv){
 
     int mode = 0;
 
-    n.param("freyja_waypoint_mode", mode, 0);
-    n.setParam("freyja_waypoint_mode", mode);
-
     //n.getParam(n.getNamespace() + "/waypoint_mode", mode);
 
     ros::Publisher waypoint_publisher;
-    waypoint_publisher = n.advertise<waypointTarget>("/discrete_waypoint_target", 10, true);
+    waypoint_publisher = n.advertise<geometry_msgs::QuaternionStamped>("/reference_state", 10, true);
 
     ros::Rate update_rate(NODE_RATE);
 
@@ -40,14 +38,9 @@ int main(int argc, char** argv){
     raw.c_cc[VEOF] = 2;
     tcsetattr(kfd, TCSANOW, &raw);
 
-    vector<waypointTarget> waypoints = file_read("/home/gersonu/NimbusLab/nimbus-freyja/waypoints.csv");
-    
-    std::string path = getexepath();
-    ROS_INFO(&path[0]);
+    std::vector<geometry_msgs::QuaternionStamped> waypoints = file_read("/home/unl-uav/uav_workspace/waypoints.csv");
 
     while(1){
-
-        n.getParam("freyja_waypoint_mode", mode);
 
         if(!ros::ok()){
             tcsetattr(kfd, TCSANOW, &cooked);
@@ -66,7 +59,6 @@ int main(int argc, char** argv){
             ROS_WARN("No more waypoints to send!\n");
         }else if(c == KEYCODE_right){
             key_pressed = true;
-            waypoints.back().waypoint_mode = mode;
 
             waypoint_publisher.publish(waypoints.back());
 

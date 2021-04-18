@@ -29,6 +29,14 @@ target_precompile_headers(safety_test PUBLIC include/pch.hpp)
 add_executable(newtakeoff
 	src/newtakeoff/NewTakeoffApp.cpp
 )
+
+add_executable(waypoint_provider
+	src/waypoint_provider/waypoint_provider.cpp src/waypoint_provider/file_utility.cpp
+)
+target_link_libraries(waypoint_provider ${catkin_LIBRARIES})
+target_include_directories(waypoint_provider PUBLIC include/waypoint_provider)
+target_precompile_headers(waypoint_provider PUBLIC include/pch.hpp)
+
 target_include_directories(newtakeoff PUBLIC include/newtakeoff)
 target_link_libraries(newtakeoff Core ${catkin_LIBRARIES})
 add_dependencies(newtakeoff Core ${catkin_EXPORTED_TARGETS})

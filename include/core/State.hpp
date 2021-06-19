@@ -1,6 +1,6 @@
 #pragma once
 
-template<typename T>
+template<typename T = uint8_t>
 class State{
 private:
 	T _state;

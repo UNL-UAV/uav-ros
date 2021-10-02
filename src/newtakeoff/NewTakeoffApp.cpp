@@ -2,10 +2,12 @@
 #include "core/EntryPoint.hpp"
 #include <ros/ros.h>
 #include "core/PX4.hpp"
+#include "core/Drone.hpp"
 
 class NewTakeoffApp : public Application {
 private:
-	PX4* _drone;
+	Drone* _drone;
+	PX4Drone* _px4Drone;
 	ros::Time _last;
 	int _increment=0;
 public:
@@ -13,33 +15,37 @@ public:
 	void init() override{
 		ROS_INFO("STARTED ROS");
 		
-		this->_drone = new PX4(*_nh);
-		this->_drone->init();
+		this->_drone = Drone::createDrone({
+			DroneSpecs::DroneType::ePX4,
+			*_nh
+		});
+
+		this->_px4Drone = static_cast<PX4Drone*>(_drone);
 		
 		ros::Rate tmpRate(25);
-		while(ros::ok() && this->_drone->isConnected()){ ros::spinOnce(); tmpRate.sleep(); } // wait till we're connected to mavros
+		this->_px4Drone->connect();
 		ROS_INFO("CONNECTED TO DRONE");
 
 		for(int i=0; i<100; i++){ 
-			this->_drone->move(0, 0, 2); 
+			this->_px4Drone->move(0, 0, 2); 
 			ros::spinOnce(); 
 			tmpRate.sleep();
 		}
 		_last = ros::Time::now();
 	};
 	void update(float delta) override{
-		this->_drone->update(delta);
+		this->_px4Drone->update(delta);
 		if(ros::Time::now() - _last > ros::Duration(5.0)){
-			if(!this->_drone->isOffboard()){
-				auto resp = this->_drone->setMode("GUIDED_NOGPS");
+			if(!this->_px4Drone->isOffboard()){
+				auto resp = this->_px4Drone->setMode("GUIDED_NOGPS");
 				if(!resp.response.mode_sent){
 					ROS_WARN("Could not set mode!");
 				}else{
 					ROS_INFO("MODE SET");
 				}
 			}
-			if(!this->_drone->isArmed()){
-				auto resp = this->_drone->setArmState(true);
+			if(!this->_px4Drone->isArmed()){
+				auto resp = this->_px4Drone->setArmState(true);
 				if(!resp.response.success){
 					ROS_WARN("FAILED Armming: %d", resp.response.result);
 				}else{
@@ -47,14 +53,12 @@ public:
 				}
 			}
 			//initialized takeoff
-			//this->_drone->takeoff_request();
-			std::cout << _drone->getState() << std::endl;
+			//this->_px4Drone->takeoff_request();
+			std::cout << _px4Drone->getState() << std::endl;
 			_increment++;
 			_last = ros::Time::now();
 		}
-		this->_drone->move(_increment-1, 0, 2);
-
-
+		this->_px4Drone->move(_increment-1, 0, 2);
 	};
 	~NewTakeoffApp() override {
 		delete _drone;

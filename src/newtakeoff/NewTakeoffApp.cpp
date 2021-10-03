@@ -2,7 +2,11 @@
 #include "core/EntryPoint.hpp"
 #include <ros/ros.h>
 #include "core/PX4.hpp"
+
 #include "core/Drone.hpp"
+#include "core/PX4Drone.hpp"
+
+#include "core/exceptions/ServiceCallFailed.hpp"
 
 class NewTakeoffApp : public Application {
 private:
@@ -35,22 +39,13 @@ public:
 	};
 	void update(float delta) override{
 		this->_px4Drone->update(delta);
-		if(ros::Time::now() - _last > ros::Duration(5.0)){
-			if(!this->_px4Drone->isOffboard()){
-				auto resp = this->_px4Drone->setMode("GUIDED_NOGPS");
-				if(!resp.response.mode_sent){
-					ROS_WARN("Could not set mode!");
-				}else{
-					ROS_INFO("MODE SET");
-				}
-			}
-			if(!this->_px4Drone->isArmed()){
-				auto resp = this->_px4Drone->setArmState(true);
-				if(!resp.response.success){
-					ROS_WARN("FAILED Armming: %d", resp.response.result);
-				}else{
-					ROS_INFO("ARM SET");
-				}
+		if(ros::Time::now() - _last > ros::Duration(5.0)){		
+			try{
+				// this->_px4Drone->mode(DroneFlightModes::ePreflight, "GUIDED_NOGPS");
+				this->_px4Drone->mode(DroneFlightModes::ePreflight, "OFFBOARD");
+				this->_px4Drone->arm(true);
+			} catch(const ServiceCallFailedException& e){
+				ROS_WARN("%s", e.what());
 			}
 			//initialized takeoff
 			//this->_px4Drone->takeoff_request();

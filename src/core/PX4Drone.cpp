@@ -1,6 +1,12 @@
 #include "core/PX4Drone.hpp"
-#include "mavros_msgs/AttitudeTarget.h"
-#include "geometry_msgs/Quaternion.h"
+
+#include <mavros_msgs/AttitudeTarget.h>
+#include <geometry_msgs/Quaternion.h>
+#include <stdexcept>
+
+#include "core/exceptions/ArmFailed.hpp"
+#include "core/exceptions/ServiceCallFailed.hpp"
+
 
 PX4Drone::PX4Drone(const DroneSpecs& specs) : _nh(specs.nodeHandle){
 	ROS_INFO("CREATED PX4 Drone");
@@ -18,12 +24,48 @@ PX4Drone::PX4Drone(const DroneSpecs& specs) : _nh(specs.nodeHandle){
 	this->_takeoffClient = _nh.serviceClient<mavros_msgs::CommandTOL>("/mavros/cmd/takeoff");
 };
 
+
+void PX4Drone::arm(bool arm){
+	if(isArmed()){ return; }
+	
+	mavros_msgs::CommandBool cmd;
+	cmd.request.value = arm;
+
+	if(_armingClient.call(cmd)){
+		throw ServiceCallFailedException("Arming");
+	}
+
+	if(!cmd.response.success){
+		throw ArmFailedExecption();
+	}
+}
+
 void PX4Drone::connect() {
 	ros::Rate tmpRate(25);
 	while(ros::ok() && isConnected()){ ros::spinOnce(); tmpRate.sleep(); }
 };
 
-void PX4Drone::PX4Drone::update(float delta) {};
+void PX4Drone::PX4Drone::update(float delta) {
+};
+
+void PX4Drone::mode(DroneFlightModes base, const std::string& custom){
+	if(custom.length() && base != DroneFlightModes::ePreflight){
+		throw std::invalid_argument("Custom mode only support DroneFlightModes::ePreflight");
+	}
+
+	mavros_msgs::SetMode modeMSG;
+	modeMSG.request.base_mode = (uint8_t)base;
+	if(custom.length())
+		modeMSG.request.custom_mode = custom.c_str();
+	
+	if(!this->_modeClient.call(modeMSG)){
+		throw ServiceCallFailedException("SetMode");
+	}
+
+	if(!modeMSG.response.mode_sent){
+		throw ServiceCallFailedException("SetMode");
+	}
+};
 
 void PX4Drone::PX4Drone::move(float x, float y, float z, bool offset) {
 	_setPosition({x, y, z});
@@ -61,10 +103,10 @@ void PX4Drone::PX4Drone::turn(float yaw) {
 };
 
 void PX4Drone::PX4Drone::takeoff() {
-	_action(PX4DroneFlightModes::eTakeoff);
+	mode(DroneFlightModes::ePreflight, "TAKEOFF");
 };
 void PX4Drone::PX4Drone::land() {
-	_action(PX4DroneFlightModes::eLand);
+	mode(DroneFlightModes::ePreflight, "LAND");
 };
 void PX4Drone::PX4Drone::home() {
 	this->move(0, 0, 1, false);
@@ -82,20 +124,6 @@ bool PX4Drone::isOffboard(){
 	return (this->_state.mode == "OFFBOARD") ? true : false;
 }
 
-const mavros_msgs::CommandBool PX4Drone::setArmState(bool arm){
-	mavros_msgs::CommandBool armMSG;
-	armMSG.request.value = arm;
-	this->_armingClient.call(armMSG);
-	return armMSG;
-}
-
-const mavros_msgs::SetMode PX4Drone::setMode(const std::string& mode){
-	mavros_msgs::SetMode modeMSG;
-	modeMSG.request.custom_mode = mode;
-	this->_modeClient.call(modeMSG);
-	return modeMSG;
-}
-
 std::string PX4Drone::getMode(){
 	return std::string(this->_state.mode);
 }
@@ -110,10 +138,11 @@ geometry_msgs::PoseStamped PX4Drone::_pose(float x, float y, float z, bool flu){
 	return ret;
 };
 
-void PX4Drone::_action(PX4DroneFlightModes action){
-	std_msgs::String val;
-	val.data = uav::to_string(action);
-	_activityPublisher.publish(val);
-};
+// Is this needed?
+// void PX4Drone::_action(PX4DroneFlightModes action){
+// 	std_msgs::String val;
+// 	val.data = uav::to_string(action);
+// 	_activityPublisher.publish(val);
+// };
 
 PX4Drone::~PX4Drone(){};

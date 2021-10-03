@@ -16,55 +16,6 @@
 #include "Vector3.hpp"
 #include "Drone.hpp"
 
-enum class PX4DroneFlightModes{
-	eUnknown,
-	ePosition,
-	eAltitude,
-	eManual,
-	eTakeoff,
-	eLand,
-	eHold,
-	eReturn,
-	eMission,
-	eOffboard
-};
-
-namespace uav{
-	std::string to_string(PX4DroneFlightModes modes){
-		switch (modes){
-			case PX4DroneFlightModes::eUnknown:
-				return "UNKOWN";
-			case PX4DroneFlightModes::ePosition:
-				return "Position";
-			break;
-			case PX4DroneFlightModes::eAltitude:
-				return "Altitude";
-			break;
-			case PX4DroneFlightModes::eManual:
-				return "Manual";
-			break;
-			case PX4DroneFlightModes::eTakeoff:
-				return "Takeoff";
-			break;
-			case PX4DroneFlightModes::eLand:
-				return "Land";
-			break;
-			case PX4DroneFlightModes::eHold:
-				return "Hold";
-			break;
-			case PX4DroneFlightModes::eReturn:
-				return "Return";
-			break;
-			case PX4DroneFlightModes::eMission:
-				return "Mission";
-			break;
-			case PX4DroneFlightModes::eOffboard:
-				return "Offboard";
-			break;
-		};
-	};
-}
-
 class PX4Drone : public Drone{
 private:
 	ros::NodeHandle _nh;
@@ -86,8 +37,10 @@ public:
 	PX4Drone() = default;
 	PX4Drone(const DroneSpecs& specs);
 	
+	virtual void arm(bool = true) override;
 	virtual void connect() override;
 	virtual void update(float delta) override;
+	virtual void mode(DroneFlightModes base, const std::string& custom) override;
 	virtual void move(float x, float y, float z, bool offset=true) override;
 	virtual void moveRAW(float roll, float pitch, float yaw, float thrust) override;
 	virtual void turn(float yaw) override;
@@ -113,5 +66,4 @@ private:
 		this->_position = v;
 	};
 	geometry_msgs::PoseStamped _pose(float x, float y, float z, bool flu=true);
-	void _action(PX4DroneFlightModes action);
 };

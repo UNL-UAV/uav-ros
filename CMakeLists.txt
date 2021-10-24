@@ -10,6 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
+catkin_package();
+
 add_library(Core 
 	src/core/Application.cpp 
 	src/core/PX4.cpp
